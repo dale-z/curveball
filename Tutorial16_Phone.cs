@@ -29,8 +29,7 @@
  * Author: Ohan Oda (ohan@cs.columbia.edu)
  * 
  *************************************************************************************/
-//GITTEST
-//GITTEST 2
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
