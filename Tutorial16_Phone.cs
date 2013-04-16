@@ -258,7 +258,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
                 groundMarkerNode = new MarkerNode(scene.MarkerTracker, "NyARToolkitGroundArray.xml", 
                     NyARToolkitTracker.ComputationMethod.Average);
 #else
-            groundMarkerNode = new MarkerNode(scene.MarkerTracker, "NyARIdGroundArray.xml",
+            groundMarkerNode = new MarkerNode(scene.MarkerTracker, "CurveballArray.xml",
                 NyARToolkitTracker.ComputationMethod.Average);
 #endif
             scene.RootNode.AddChild(groundMarkerNode);

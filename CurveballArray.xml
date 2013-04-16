@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<multimarker markers="36">
+  <marker patternId="1" patternSize="57" center="-163.78,-163.78" />
+  <marker patternId="2" patternSize="57" center="-163.78,-98.23" />
+  <marker patternId="3" patternSize="57" center="-163.78,-32.68" />
+  <marker patternId="4" patternSize="57" center="-163.78,32.87" />
+  <marker patternId="5" patternSize="57" center="-163.78,98.42" />
+  <marker patternId="6" patternSize="57" center="-163.78,163.97" />
+  <marker patternId="9" patternSize="57" center="-98.23,-163.78" />
+  <marker patternId="10" patternSize="57" center="-98.23,-98.23" />
+  <marker patternId="11" patternSize="57" center="-98.23,-32.68" />
+  <marker patternId="12" patternSize="57" center="-98.23,32.87" />
+  <marker patternId="13" patternSize="57" center="-98.23,98.42" />
+  <marker patternId="14" patternSize="57" center="-98.23,163.97" />
+  <marker patternId="17" patternSize="57" center="-32.68,-163.78" />
+  <marker patternId="18" patternSize="57" center="-32.68,-98.23" />
+  <marker patternId="19" patternSize="57" center="-32.68,-32.68" />
+  <marker patternId="20" patternSize="57" center="-32.68,32.87" />
+  <marker patternId="21" patternSize="57" center="-32.68,98.42" />
+  <marker patternId="22" patternSize="57" center="-32.68,163.97" />
+  <marker patternId="25" patternSize="57" center="32.87,-163.78" />
+  <marker patternId="26" patternSize="57" center="32.87,-98.23" />
+  <marker patternId="27" patternSize="57" center="32.87,-32.68" />
+  <marker patternId="28" patternSize="57" center="32.87,32.87" />
+  <marker patternId="29" patternSize="57" center="32.87,98.42" />
+  <marker patternId="30" patternSize="57" center="32.87,163.97" />
+  <marker patternId="33" patternSize="57" center="98.42,-163.78" />
+  <marker patternId="34" patternSize="57" center="98.42,-98.23" />
+  <marker patternId="35" patternSize="57" center="98.42,-32.68" />
+  <marker patternId="36" patternSize="57" center="98.42,32.87" />
+  <marker patternId="37" patternSize="57" center="98.42,98.42" />
+  <marker patternId="38" patternSize="57" center="98.42,163.97" />
+  <marker patternId="41" patternSize="57" center="163.97,-163.78" />
+  <marker patternId="42" patternSize="57" center="163.97,-98.23" />
+  <marker patternId="43" patternSize="57" center="163.97,-32.68" />
+  <marker patternId="44" patternSize="57" center="163.97,32.87" />
+  <marker patternId="45" patternSize="57" center="163.97,98.42" />
+  <marker patternId="46" patternSize="57" center="163.97,163.97" />
+</multimarker>
