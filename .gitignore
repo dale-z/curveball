@@ -1,7 +1,5 @@
-# *.ico
-# *.bmp
-# *.jpg
-# *.png
-*.exe
-*.dll
-*.cache
+*
+!*.cs
+!*.xaml
+!*.xml
+!*.bmp
