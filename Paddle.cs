@@ -9,7 +9,7 @@ using System.Text;
 namespace Curveball
 {
     // This class is different from 'Player' since they are not in the
-    // same concept domain.
+    // same concept domain!
     public class Paddle
     {
         public Paddle(PlayerAgent player)
