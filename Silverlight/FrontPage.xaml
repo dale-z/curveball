@@ -1,0 +1,47 @@
+﻿<phone:PhoneApplicationPage
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" xmlns:ec="clr-namespace:Microsoft.Expression.Interactivity.Core;assembly=Microsoft.Expression.Interactions"
+    x:Class="Tutorial16___Multiple_Viewport___Phone.FrontPage"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Landscape" Orientation="Landscape"
+    mc:Ignorable="d">
+	<StackPanel HorizontalAlignment="Left" Height="480" VerticalAlignment="Top" Width="800">
+		<Rectangle Height="100">
+			<Rectangle.Fill>
+				<VideoBrush/>
+			</Rectangle.Fill>
+		</Rectangle>
+		<RichTextBox HorizontalAlignment="Left" Height="97" VerticalAlignment="Top" Width="800" FontFamily="Aharoni">
+			<Paragraph TextAlignment="Center">
+				<Run FontSize="79.25" Text="Curveball 2.0"/>
+			</Paragraph>
+		</RichTextBox>
+		<StackPanel Height="195" Orientation="Horizontal">
+			<Button Content="Single Player" Width="266">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="Click">
+						<ec:NavigateToPageAction TargetPage="/GamePage.xaml"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Button>
+			<Button Content="Multi Player" Width="265"/>
+			<Button Content="Settings" Width="266">
+				<i:Interaction.Triggers>
+					<i:EventTrigger EventName="Click">
+						<ec:NavigateToPageAction TargetPage="/Settings.xaml"/>
+					</i:EventTrigger>
+				</i:Interaction.Triggers>
+			</Button>
+		</StackPanel>
+	</StackPanel>
+
+    <!--LayoutRoot is the root grid where all page content is placed-->
+
+</phone:PhoneApplicationPage>
