@@ -59,6 +59,7 @@ using GoblinXNA.UI;
 using GoblinXNA.UI.UI2D;
 
 using Tutorial16___Multiple_Viewport;
+using Curveball;
 
 namespace Tutorial16___Multiple_Viewport___PhoneLib
 {
@@ -92,6 +93,24 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
         Texture2D videoTexture;
 
         float markerSize = 32.4f;
+
+        /*
+         * TODO
+         * Curveball related members start here.
+         */
+
+        // The state of the game.
+        enum GameState
+        {
+            Menu, Level
+        }
+        GameState _state;
+        // The menu. There is only one persisten menu object in the container.
+        Menu _menu;
+        // The level. There could be multiple level instances across the lifetime
+        // of the container, but at any given time at most only one instance
+        // exists.
+        Level _level;
 
         public Tutorial16_Phone()
         {
@@ -140,6 +159,9 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             CreateObjects();
 
             State.ShowFPS = true;
+
+            // TODO Initialize the scene with info from
+            // a 'Level' object.
         }
 
         private void CreateCameras()
@@ -345,7 +367,21 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
 
         public void Update(TimeSpan elapsedTime, bool isActive)
         {
+            // Decide whose logic to run? Menu/gameplay?
+
+            // TODO Get info from 'Level' object to update
+            // everything that is not physics related.
+            // e.g. A paddle controlled by AI/Player
+            //      The geometry of objects (paddle, tunnel, etc.)
+
+            // 1. Update level info.
+            // 2. Extract level info into the scene.
+            // 3. Update the scene.
             scene.Update(elapsedTime, false, isActive);
+
+            // Then the objects in the level is able to access the
+            // updated scene since they each have a reference pointing
+            // back to the level object.
         }
 
         public void Draw(TimeSpan elapsedTime)
