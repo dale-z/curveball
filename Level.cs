@@ -32,16 +32,18 @@ using Tutorial16___Multiple_Viewport___PhoneLib;
 
 namespace Curveball
 {
-    // The viewport and ground marker node comes from the container.
+    // The viewport and ground marker node come from the container
+    // and are shared by levels attached to it.
     // This class only contains level specific scene elements.
 
     // An instance of this class is supposed to be created with
-    // information from the menu as well as built-in settings.
+    // information from the menu as well as built-in settings, all stored in a
+    // 'LevelInfo' object.
     public class Level
     {
         public enum LevelResult
         {
-            Winned, Lost, Na
+            Team1, Team2, Na
         };
 
         private Tutorial16_Phone _container;
@@ -49,30 +51,35 @@ namespace Curveball
 
         // Player's team. A team contains one or multiple players.
         private List<PlayerAgent> _team1;
-        // Overall transform for Team 1.
+        // Overall transform for Team 1 so that its players are on the right side of the tunnel.
         private TransformNode _transTeam1Node;
+        // The main player on this team if one exists.
         private MainPlayer _player1;
 
         // Opponent's team. A team contains one or multiple players.
         private List<PlayerAgent> _team2;
-        // Overall transform for Team 2.
+        // Overall transform for Team 2 so that its players are on the right side of the tunnel.
         private TransformNode _transTeam2Node;
+        // The main player on this team if one exists.
         private MainPlayer _player2;
 
-        // The tunnel. Represent it using a node?
+        // The tunnel. Contains its node and related data.
         private Tunnel _tunnel;
 
-        // The ball. Represent it using a node?
+        // The ball. Contains its node and related data.
         private Ball _ball;
+        TransformNode _transBallNode;
 
-        // A list of active powerups.
+        // The powerups. Each of them contains its node and related data.
         private List<Powerup> _powerups;
 
-        // Move the level specific part of the scene graph from the
-        // container to this class.
+        // The root node that contains everying for this level.
+        // It should be attached to the root node of the scene
+        // in a 'Tutorial16_Phone' instance (the container).
+        private TransformNode _levelRootNode;
 
-        TransformNode _levelRootNode;
-        GeometryNode _overlayNode;
+        // The node for the aircraft from the original tutorial. For testing only.
+        private GeometryNode _overlayNode;
 
         public Level(Tutorial16_Phone container, LevelInfo info)
         {
@@ -152,7 +159,10 @@ namespace Curveball
         {
             // Add ball and set ball initial velocity.
             _ball = new Ball(this);
-            _levelRootNode.AddChild(_ball.Node);
+
+            _transBallNode = new TransformNode();
+            _transBallNode.AddChild(_ball.Node);
+            _levelRootNode.AddChild(_transBallNode);
             // TODO Set the transformation of the ball.
             // TODO Set physics for the ball there.
         }
@@ -250,6 +260,9 @@ namespace Curveball
         // Where the non-physics logic goes...
         public void Update()
         {
+            Vector3 trans = _transBallNode.Translation;
+            _transBallNode.Translation = new Vector3(trans.X, trans.Y - 0.3f, trans.Z);
+
             return;
 
             switch (_info.CurrentRole)
@@ -322,8 +335,23 @@ namespace Curveball
 
         public LevelResult GetResult()
         {
+            float borderOffsetTeam1 = -Tunnel.Length / 2;
+            float borderOffsetTeam2 = Tunnel.Length / 2;
+
             // Determine if the ball has gone past the border of some side.
-            return LevelResult.Na;
+
+            if (_ball.Node.WorldTransformation.Translation.Y < borderOffsetTeam1)
+            {
+                return LevelResult.Team2;
+            }
+            else if (_ball.Node.WorldTransformation.Translation.Y > borderOffsetTeam2)
+            {
+                return LevelResult.Team1;
+            }
+            else
+            {
+                return LevelResult.Na;
+            }
         }
     }
 }

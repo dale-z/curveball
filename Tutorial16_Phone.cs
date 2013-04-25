@@ -95,20 +95,16 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
 
         float markerSize = 32.4f;
 
-        /*
-         * TODO
-         * Curveball related members start here.
-         */
-
-        // The state of the game.
+        // Curveball: The state of the game.
         enum GameState
         {
             Menu, Level
         }
         GameState _state;
-        // The level. There could be multiple level instances across the lifetime
-        // of the container, but at any given time at most only one instance
-        // exists.
+
+        // The current level of the game. Its lifetime is shorter than a Tutorial16_Phone
+        // instance holding it, since a Tutorial16_Phone instance contains resources that
+        // should be shared across instances of 'Level', such as the ground array transformation.
         Level _level;
 
         public Tutorial16_Phone()
@@ -160,11 +156,14 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 1 / 30f;
             scene.PhysicsEngine.Gravity = 10;
 
-            // TODO Initialize the scene with info from
-            // a 'Level' object.
+            // Curveball: Initialize a test level here.
+
+            // Create a 'LevelInfo' instance describing the level settings.
             LevelInfo info = new LevelInfo(Role.Server);
             info.Team1PlayerTypes.Add(PlayerAgentType.Ai);
             info.Team2PlayerTypes.Add(PlayerAgentType.Main);
+
+            // Create a level with the settings, and start it.
             StartLevel(new Level(this, info));
         }
 
@@ -338,6 +337,8 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
 
         public void Update(TimeSpan elapsedTime, bool isActive)
         {
+            // Curveball:
+
             // Decide whose logic to run.
             if (_state == GameState.Menu)
             {
@@ -356,7 +357,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
                 }
             }
 
-            // Update scene, including physics.
+            // Update the other aspects of the scene as normal.
             scene.Update(elapsedTime, false, isActive);
         }
 
@@ -423,18 +424,24 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             vrViewRect.X -= viewport.X;
         }
 
+        // Curveball:
         public void GoToMenu()
         {
-            _level.Unmount();
-            _state = GameState.Menu;
+            // This line crashes GoblinXNA. Waiting for the bug to be resolved.
+            // _level.Unmount();
 
-            // TODO Switch to a menu page.
+            // Set the state to indicate the menu is running.
+            _state = GameState.Menu;
         }
 
+        // Curveball:
         public void StartLevel(Level level)
         {
+            // Mount the root node of the level to a subnode of the scene.
             _level = level;
             _level.Mount();
+
+            // Set the state to indicate a level is running.
             _state = GameState.Level;
         }
 
