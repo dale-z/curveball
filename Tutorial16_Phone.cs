@@ -426,7 +426,6 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
         public void GoToMenu()
         {
             _level.Unmount();
-            _level = null;
             _state = GameState.Menu;
 
             // TODO Switch to a menu page.
