@@ -60,6 +60,7 @@ using GoblinXNA.UI.UI2D;
 
 using Tutorial16___Multiple_Viewport;
 using Curveball;
+using GoblinXNA.Physics.Matali;
 
 namespace Tutorial16___Multiple_Viewport___PhoneLib
 {
@@ -78,7 +79,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
         Viewport viewport;
 
         GeometryNode markerBoardGeom;
-        GeometryNode overlayNode;
+        TransformNode overlayRoot;
         GeometryNode vrCameraRepNode;
         TransformNode vrCameraRepTransNode;
 
@@ -105,8 +106,6 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             Menu, Level
         }
         GameState _state;
-        // The menu. There is only one persisten menu object in the container.
-        Menu _menu;
         // The level. There could be multiple level instances across the lifetime
         // of the container, but at any given time at most only one instance
         // exists.
@@ -137,9 +136,6 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Initialize the scene graph
             scene = new Scene();
 
-            // Set up the lights used in the scene
-            CreateLights();
-
             // Set up cameras for both the AR and VR scenes
             CreateCameras();
 
@@ -156,12 +152,20 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             CreateMarkerBoard();
 
             // Create 3D objects
-            CreateObjects();
+            InitializeOverlay();
 
             State.ShowFPS = true;
 
+            scene.PhysicsEngine = new MataliPhysics();
+            ((MataliPhysics)scene.PhysicsEngine).SimulationTimeStep = 1 / 30f;
+            scene.PhysicsEngine.Gravity = 10;
+
             // TODO Initialize the scene with info from
             // a 'Level' object.
+            LevelInfo info = new LevelInfo(Role.Server);
+            info.Team1PlayerTypes.Add(PlayerAgentType.Ai);
+            info.Team2PlayerTypes.Add(PlayerAgentType.Main);
+            StartLevel(new Level(this, info));
         }
 
         private void CreateCameras()
@@ -188,22 +192,6 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Set the AR camera to be the main camera so that at the time of setting up the marker tracker,
             // the marker tracker will assign the right projection matrix to this camera
             scene.CameraNode = arCameraNode;
-        }
-
-        private void CreateLights()
-        {
-            // Create a directional light source
-            LightSource lightSource = new LightSource();
-            lightSource.Direction = new Vector3(1, -1, -1);
-            lightSource.Diffuse = Color.White.ToVector4();
-            lightSource.Specular = new Vector4(0.6f, 0.6f, 0.6f, 1);
-
-            // Create a light node to hold the light source
-            LightNode lightNode = new LightNode();
-            lightNode.AmbientLightColor = new Vector4(0.5f, 0.5f, 0.5f, 1);
-            lightNode.LightSource = lightSource;
-
-            scene.RootNode.AddChild(lightNode);
         }
 
         private void SetupViewport()
@@ -280,7 +268,9 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
                 groundMarkerNode = new MarkerNode(scene.MarkerTracker, "NyARToolkitGroundArray.xml", 
                     NyARToolkitTracker.ComputationMethod.Average);
 #else
-            groundMarkerNode = new MarkerNode(scene.MarkerTracker, "CurveballArray.xml",
+            //groundMarkerNode = new MarkerNode(scene.MarkerTracker, "CurveballArray.xml",
+            //    NyARToolkitTracker.ComputationMethod.Average);
+            groundMarkerNode = new MarkerNode(scene.MarkerTracker, "NyARToolkitIDGroundArray.xml",
                 NyARToolkitTracker.ComputationMethod.Average);
 #endif
             scene.RootNode.AddChild(groundMarkerNode);
@@ -335,29 +325,10 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             camOffset.AddChild(vrCameraRepNode);
         }
 
-        private void CreateObjects()
+        private void InitializeOverlay()
         {
-            ModelLoader loader = new ModelLoader();
-
-            overlayNode = new GeometryNode("Overlay");
-            overlayNode.Model = (Model)loader.Load("", "p1_wedge");
-            ((Model)overlayNode.Model).UseInternalMaterials = true;
-
-            // Get the dimension of the model
-            Vector3 dimension = Vector3Helper.GetDimensions(overlayNode.Model.MinimumBoundingBox);
-            // Scale the model to fit to the size of 5 markers
-            float scale = markerSize * 5 / Math.Max(dimension.X, dimension.Z);
-
-            TransformNode overlayTransNode = new TransformNode()
-            {
-                Translation = new Vector3(0, 0, dimension.Y * scale / 2),
-                Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)) *
-                    Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathHelper.ToRadians(90)),
-                Scale = new Vector3(scale, scale, scale)
-            };
-
-            scene.RootNode.AddChild(overlayTransNode);
-            overlayTransNode.AddChild(overlayNode);
+            overlayRoot = new TransformNode();
+            scene.RootNode.AddChild(overlayRoot);
         }
 
         public void Dispose()
@@ -367,21 +338,26 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
 
         public void Update(TimeSpan elapsedTime, bool isActive)
         {
-            // Decide whose logic to run? Menu/gameplay?
+            // Decide whose logic to run.
+            if (_state == GameState.Menu)
+            {
+                // Currently do nothing.
+            }
+            else
+            {
+                // Update non-physics logic.
+                _level.Update();
 
-            // TODO Get info from 'Level' object to update
-            // everything that is not physics related.
-            // e.g. A paddle controlled by AI/Player
-            //      The geometry of objects (paddle, tunnel, etc.)
+                // If a winner is born...
+                if (_level.GetResult() != Level.LevelResult.Na)
+                {
+                    // ... Go back to the menu.
+                    GoToMenu();
+                }
+            }
 
-            // 1. Update level info.
-            // 2. Extract level info into the scene.
-            // 3. Update the scene.
+            // Update scene, including physics.
             scene.Update(elapsedTime, false, isActive);
-
-            // Then the objects in the level is able to access the
-            // updated scene since they each have a reference pointing
-            // back to the level object.
         }
 
         public void Draw(TimeSpan elapsedTime)
@@ -397,8 +373,8 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Set the camera to be the AR camera
             scene.CameraNode = arCameraNode;
             // Associate the overlaid model with the ground marker for rendering it in AR scene
-            scene.RootNode.RemoveChild(overlayNode.Parent);
-            groundMarkerNode.AddChild(overlayNode.Parent);
+            scene.RootNode.RemoveChild(overlayRoot);
+            groundMarkerNode.AddChild(overlayRoot);
             // Don't render the marker board and camera representation
             markerBoardGeom.Enabled = false;
             vrCameraRepNode.Enabled = false;
@@ -415,8 +391,8 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Set the camera to be the VR camera
             scene.CameraNode = vrCameraNode;
             // Remove the overlaid model from the ground marker for rendering it in VR scene
-            groundMarkerNode.RemoveChild(overlayNode.Parent);
-            scene.RootNode.AddChild(overlayNode.Parent);
+            groundMarkerNode.RemoveChild(overlayRoot);
+            scene.RootNode.AddChild(overlayRoot);
             // Render the marker board and camera representation in VR scene
             markerBoardGeom.Enabled = true;
             vrCameraRepNode.Enabled = true;
@@ -445,6 +421,46 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Reset the adjustments
             arViewRect.X -= viewport.X;
             vrViewRect.X -= viewport.X;
+        }
+
+        public void GoToMenu()
+        {
+            _level.Unmount();
+            _level = null;
+            _state = GameState.Menu;
+
+            // TODO Switch to a menu page.
+        }
+
+        public void StartLevel(Level level)
+        {
+            _level = level;
+            _level.Mount();
+            _state = GameState.Level;
+        }
+
+        public Scene Scene
+        {
+            get
+            {
+                return scene;
+            }
+        }
+
+        public TransformNode OverlayRoot
+        {
+            get
+            {
+                return overlayRoot;
+            }
+        }
+
+        public float MarkerSize
+        {
+            get
+            {
+                return markerSize;
+            }
         }
     }
 }

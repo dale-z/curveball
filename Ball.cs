@@ -1,5 +1,7 @@
 ﻿using GoblinXNA.Graphics;
+using GoblinXNA.Graphics.Geometry;
 using GoblinXNA.SceneGraph;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,16 +15,17 @@ namespace Curveball
         {
             _level = level;
 
-            throw new NotImplementedException();
+            // TODO Set its node (model and transformation).
+            Node = new SynchronizedGeometryNode();
+
+            Node.Model = new Sphere(5, 32, 32);
+            Node.Material.Ambient = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+            Node.Material.Diffuse = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+            Node.Material.Specular = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+            Node.Material.SpecularPower = 100.0f;
         }
 
-        public TransformNode Transform
-        {
-            get;
-            set;
-        }
-
-        public IModel Model
+        public SynchronizedGeometryNode Node
         {
             get;
             set;

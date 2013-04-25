@@ -8,29 +8,8 @@ using System.Text;
 
 namespace Curveball
 {
-    // This class is different from 'Player' since they are not in the
-    // same concept domain!
+    // I doubt if this class is necessary.
     public class Paddle
     {
-        public Paddle(PlayerAgent player)
-        {
-            _player = player;
-
-            throw new NotImplementedException();
-        }
-
-        public TransformNode Transform
-        {
-            get;
-            set;
-        }
-
-        public IModel Model
-        {
-            get;
-            set;
-        }
-
-        private PlayerAgent _player;
     }
 }

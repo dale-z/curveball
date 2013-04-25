@@ -1,3 +1,6 @@
+using GoblinXNA.Graphics.Geometry;
+using GoblinXNA.SceneGraph;
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,10 +16,17 @@ namespace Curveball
         public MainPlayer(Level level)
             : base(level)
         {
-            throw new NotImplementedException();
+            // Green...
+
+            Node = new SynchronizedGeometryNode();
+            Node.Model = new Box(30, 30, 30);
+            Node.Material.Ambient = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+            Node.Material.Diffuse = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+            Node.Material.Specular = new Vector4(0.0f, 1.0f, 0.0f, 1.0f);
+            Node.Material.SpecularPower = 100.0f;
         }
 
-        public override Paddle Update()
+        public override void Update()
         {
             throw new NotImplementedException();
         }

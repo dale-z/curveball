@@ -14,8 +14,6 @@ namespace Curveball
         public Powerup(Level level)
         {
             _level = level;
-
-            throw new NotImplementedException();
         }
 
         // Callback to modify other objects in the game?

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Microsoft.Xna.Framework;
+using GoblinXNA.SceneGraph;
 
 namespace Curveball
 {
@@ -12,11 +13,15 @@ namespace Curveball
         public PlayerAgent(Level level)
         {
             _level = level;
-
-            throw new NotImplementedException();
         }
 
-        public abstract Paddle Update();
+        public SynchronizedGeometryNode Node
+        {
+            get;
+            protected set;
+        }
+
+        public abstract void Update();
 
         public int Score
         {
