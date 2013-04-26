@@ -15,20 +15,22 @@ namespace Curveball
         // A static player used mainly as an obstable to
         // bounce the ball back. Typically used in the practice
         // mode.
-        public WallPlayer(Level level)
+        public WallPlayer(Level level, string name)
             : base(level)
         {
-            Node = new SynchronizedGeometryNode();
+            Node = new SynchronizedGeometryNode(name);
             Node.Model = new Box(Tunnel.Width, WallThickness, Tunnel.Height);
             Node.Material.Ambient = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             Node.Material.Diffuse = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             Node.Material.Specular = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
             Node.Material.SpecularPower = 100.0f;
+
+            // TODO Add physics for the wall.
         }
 
         public override void Update()
         {
-            // Do nothing.
+            // Do nothing. It's a wall!
         }
     }
 }

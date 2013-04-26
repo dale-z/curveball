@@ -11,18 +11,20 @@ namespace Curveball
 {
     public class Ball
     {
-        public Ball(Level level)
+        public Ball(Level level, string name)
         {
             _level = level;
 
             // TODO Set its node (model and transformation).
-            Node = new SynchronizedGeometryNode();
+            Node = new SynchronizedGeometryNode(name);
 
             Node.Model = new Sphere(5, 32, 32);
             Node.Material.Ambient = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             Node.Material.Diffuse = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             Node.Material.Specular = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
             Node.Material.SpecularPower = 100.0f;
+
+            // TODO Add physics for the ball.
         }
 
         public SynchronizedGeometryNode Node

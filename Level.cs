@@ -1,34 +1,31 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
-
+﻿using Curveball;
+using GoblinXNA;
+using GoblinXNA.Device.Capture;
+using GoblinXNA.Device.Generic;
+using GoblinXNA.Device.Util;
+using GoblinXNA.Device.Vision;
+using GoblinXNA.Device.Vision.Marker;
+using GoblinXNA.Graphics;
+using GoblinXNA.Graphics.Geometry;
+using GoblinXNA.Helpers;
+using GoblinXNA.SceneGraph;
+using GoblinXNA.UI;
+using GoblinXNA.UI.UI2D;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Media;
+using Tutorial16___Multiple_Viewport;
+using Tutorial16___Multiple_Viewport___PhoneLib;
 using Color = Microsoft.Xna.Framework.Color;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-
-using GoblinXNA;
-using GoblinXNA.Graphics;
-using GoblinXNA.SceneGraph;
 using Model = GoblinXNA.Graphics.Model;
-using GoblinXNA.Graphics.Geometry;
-using GoblinXNA.Device.Generic;
-using GoblinXNA.Device.Capture;
-using GoblinXNA.Device.Vision;
-using GoblinXNA.Device.Vision.Marker;
-using GoblinXNA.Device.Util;
-using GoblinXNA.Helpers;
-using GoblinXNA.UI;
-using GoblinXNA.UI.UI2D;
-
-using Tutorial16___Multiple_Viewport;
-using Curveball;
-using Tutorial16___Multiple_Viewport___PhoneLib;
 
 namespace Curveball
 {
@@ -41,12 +38,15 @@ namespace Curveball
     // 'LevelInfo' object.
     public class Level
     {
+        // Who is the winnder.
         public enum LevelResult
         {
             Team1, Team2, Na
         };
 
+        // The container of this level instance.
         private Tutorial16_Phone _container;
+        // The level info used to initialize this level.
         private LevelInfo _info;
 
         // Player's team. A team contains one or multiple players.
@@ -64,11 +64,12 @@ namespace Curveball
         private MainPlayer _player2;
 
         // The tunnel. Contains its node and related data.
+        TransformNode _transTunnelNode;
         private Tunnel _tunnel;
 
         // The ball. Contains its node and related data.
-        private Ball _ball;
         TransformNode _transBallNode;
+        private Ball _ball;
 
         // The powerups. Each of them contains its node and related data.
         private List<Powerup> _powerups;
@@ -78,8 +79,11 @@ namespace Curveball
         // in a 'Tutorial16_Phone' instance (the container).
         private TransformNode _levelRootNode;
 
-        // The node for the aircraft from the original tutorial. For testing only.
-        private GeometryNode _overlayNode;
+        // Names for those 'SynchronizedGeometryNode'.
+        private const string BallName = "Ball";
+        private const string TunnelName = "Tunnel";
+        private const string Team1NamePrefix = "Player1_";
+        private const string Team2NamePrefix = "Player2_";
 
         public Level(Tutorial16_Phone container, LevelInfo info)
         {
@@ -89,17 +93,10 @@ namespace Curveball
             _team1 = new List<PlayerAgent>();
             _team2 = new List<PlayerAgent>();
 
-            _ball = new Ball(this);
-            _tunnel = new Tunnel(this);
-
             _powerups = new List<Powerup>();
 
             _levelRootNode = new TransformNode();
 
-            // For testing, use:
-            // CreateObjects();
-
-            // After 'Initialize' has been implemented, use:
             Initialize();
         }
 
@@ -123,16 +120,13 @@ namespace Curveball
             _transTeam1Node = new TransformNode();
             _levelRootNode.AddChild(_transTeam1Node);
             _transTeam1Node.Translation = new Vector3(0.0f, -Tunnel.Length / 2.0f, 0.0f);
-            AddPlayers(_info.Team1PlayerTypes, _team1, Role.Team1);
+            AddPlayers(_info.Team1PlayerTypes, _team1, Role.Team1, Team1NamePrefix);
 
             // Team 2.
             _transTeam2Node = new TransformNode();
             _levelRootNode.AddChild(_transTeam2Node);
             _transTeam2Node.Translation = new Vector3(0.0f, Tunnel.Length / 2.0f, 0.0f);
-            AddPlayers(_info.Team2PlayerTypes, _team2, Role.Team2);
-
-            // For test purposes:
-            // CreateObjects();
+            AddPlayers(_info.Team2PlayerTypes, _team2, Role.Team2, Team2NamePrefix);
         }
 
         private void InitializePhysics()
@@ -158,27 +152,34 @@ namespace Curveball
         private void AddBall()
         {
             // Add ball and set ball initial velocity.
-            _ball = new Ball(this);
+            _ball = new Ball(this, BallName);
 
             _transBallNode = new TransformNode();
+
+            // TODO Set the transformation of the ball.
+
             _transBallNode.AddChild(_ball.Node);
             _levelRootNode.AddChild(_transBallNode);
-            // TODO Set the transformation of the ball.
-            // TODO Set physics for the ball there.
+
+            // TODO Set physics for the ball here.
         }
 
         private void AddTunnel()
         {
             // Add tunnel.
-            _tunnel = new Tunnel(this);
+            _tunnel = new Tunnel(this, TunnelName);
 
-            TransformNode transNode = new TransformNode();
+            _transTunnelNode = new TransformNode();
 
-            _levelRootNode.AddChild(_tunnel.Node);
             // TODO Set the transformation of the tunnel.
+
+            _transTunnelNode.AddChild(_tunnel.Node);
+            _levelRootNode.AddChild(_transTunnelNode);
+
+            // TODO Set physics for the tunnel here.
         }
 
-        private void AddPlayers(List<PlayerAgentType> types, List<PlayerAgent> team, Role role)
+        private void AddPlayers(List<PlayerAgentType> types, List<PlayerAgent> team, Role role, string namePrefix)
         {
             foreach (PlayerAgentType type in types)
             {
@@ -186,15 +187,15 @@ namespace Curveball
                 switch (type)
                 {
                     case PlayerAgentType.Ai:
-                        player = new AiPlayer(this);
+                        player = new AiPlayer(this, namePrefix + team.Count);
                         break;
 
                     case PlayerAgentType.Main:
-                        player = new MainPlayer(this);
+                        player = new MainPlayer(this, namePrefix + team.Count);
                         break;
 
                     case PlayerAgentType.Wall:
-                        player = new WallPlayer(this);
+                        player = new WallPlayer(this, namePrefix + team.Count);
                         break;
 
                     default:
@@ -221,30 +222,6 @@ namespace Curveball
             }
         }
 
-        private void CreateObjects()
-        {
-            ModelLoader loader = new ModelLoader();
-
-            _overlayNode = new GeometryNode("Overlay");
-            _overlayNode.Model = (Model)loader.Load("", "p1_wedge");
-            ((Model)_overlayNode.Model).UseInternalMaterials = true;
-
-            // Get the dimension of the model
-            Vector3 dimension = Vector3Helper.GetDimensions(_overlayNode.Model.MinimumBoundingBox);
-            // Scale the model to fit to the size of 5 markers
-            float scale = 100 / Math.Max(dimension.X, dimension.Z);
-
-            _levelRootNode = new TransformNode()
-            {
-                Translation = new Vector3(0, 0, dimension.Y * scale / 2),
-                Rotation = Quaternion.CreateFromAxisAngle(Vector3.UnitX, MathHelper.ToRadians(90)) *
-                    Quaternion.CreateFromAxisAngle(Vector3.UnitY, MathHelper.ToRadians(90)),
-                Scale = new Vector3(scale, scale, scale)
-            };
-
-            _levelRootNode.AddChild(_overlayNode);
-        }
-
         public void Mount()
         {
             // Attach its elements to the scene graph in the container.
@@ -258,25 +235,24 @@ namespace Curveball
         }
 
         // Where the non-physics logic goes...
-        public void Update()
+        public void Update(TimeSpan elapsedTime, bool isActive)
         {
-            Vector3 trans = _transBallNode.Translation;
-            _transBallNode.Translation = new Vector3(trans.X, trans.Y - 0.3f, trans.Z);
-
+            // The following part is not finished.
+            // Return here to avoid 'NotImplementedExeption' during testing.
             return;
 
             switch (_info.CurrentRole)
             {
                 case Role.Team1:
-                    UpdateTeam1();
+                    UpdateTeam1(elapsedTime, isActive);
                     break;
 
                 case Role.Team2:
-                    UpdateTeam2();
+                    UpdateTeam2(elapsedTime, isActive);
                     break;
 
                 case Role.Server:
-                    UpdateServer();
+                    UpdateServer(elapsedTime, isActive);
                     break;
 
                 default:
@@ -284,20 +260,28 @@ namespace Curveball
             }
         }
 
-        public void UpdateTeam1()
+        public void UpdateTeam1(TimeSpan elapsedTime, bool isActive)
         {
-            // TODO Just transmit its ground array transformation to the server?
+            // TODO
+            // Just transmit its ground array transformation
+            // back to the server.
             throw new NotImplementedException();
         }
 
-        public void UpdateTeam2()
+        public void UpdateTeam2(TimeSpan elapsedTime, bool isActive)
         {
-            // TODO Just transmit its ground array transformation to the server?
+            // TODO
+            // Just transmit its ground array transformation
+            // back to the server.
             throw new NotImplementedException();
         }
 
-        public void UpdateServer()
+        public void UpdateServer(TimeSpan elapsedTime, bool isActive)
         {
+            // TODO
+            // 1. Update movement of paddles according to the.
+            // 2. Update physics.
+
             // Update the players and opponents.
             foreach (PlayerAgent player in _team1)
             {
@@ -308,15 +292,7 @@ namespace Curveball
                 opponent.Update();
             }
 
-            // The update of the ball and the tunnel consists of
-            // of two parts: physics and non-physics.
-            // The former is handled by GoblinXNA, and the latter
-            // will be handled by the update functions of
-            // powerups that have effects on them.
-            // So they are essentially inactive objects here.
-
-
-            // TODO Generate new powerups.
+            // TODO Generate new powerups when appropriate.
 
             // Update powerups.
             foreach (Powerup powerup in _powerups)
@@ -330,6 +306,8 @@ namespace Curveball
                 if (_powerups[i].TTL == 0) _powerups.RemoveAt(i);
             }
 
+            // TODO Call scene.Update() here.
+
             throw new NotImplementedException();
         }
 
@@ -338,7 +316,7 @@ namespace Curveball
             float borderOffsetTeam1 = -Tunnel.Length / 2;
             float borderOffsetTeam2 = Tunnel.Length / 2;
 
-            // Determine if the ball has gone past the border of some side.
+            // Determine if the ball has gone past the border of either side.
 
             if (_ball.Node.WorldTransformation.Translation.Y < borderOffsetTeam1)
             {
@@ -351,6 +329,22 @@ namespace Curveball
             else
             {
                 return LevelResult.Na;
+            }
+        }
+
+        public TransformNode LevelRootNode
+        {
+            get
+            {
+                return _levelRootNode;
+            }
+        }
+
+        public Tutorial16_Phone Container
+        {
+            get
+            {
+                return _container;
             }
         }
     }

@@ -44,6 +44,18 @@ namespace Curveball
             private set;
         }
 
+        public string Player1Name
+        {
+            get;
+            set;
+        }
+
+        public string Player2Name
+        {
+            get;
+            set;
+        }
+
         // Other fields can also be added, e.g. ball physics parameters.
 
         public LevelInfo(Role role)

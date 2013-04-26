@@ -30,37 +30,34 @@
  * 
  *************************************************************************************/
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Media;
-
+using Curveball;
+using GoblinXNA;
+using GoblinXNA.Device.Capture;
+using GoblinXNA.Device.Generic;
+using GoblinXNA.Device.Util;
+using GoblinXNA.Device.Vision;
+using GoblinXNA.Device.Vision.Marker;
+using GoblinXNA.Graphics;
+using GoblinXNA.Graphics.Geometry;
+using GoblinXNA.Helpers;
+using GoblinXNA.Physics.Matali;
+using GoblinXNA.SceneGraph;
+using GoblinXNA.UI;
+using GoblinXNA.UI.UI2D;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Media;
+using Tutorial16___Multiple_Viewport;
 using Color = Microsoft.Xna.Framework.Color;
 using Matrix = Microsoft.Xna.Framework.Matrix;
-
-using GoblinXNA;
-using GoblinXNA.Graphics;
-using GoblinXNA.SceneGraph;
 using Model = GoblinXNA.Graphics.Model;
-using GoblinXNA.Graphics.Geometry;
-using GoblinXNA.Device.Generic;
-using GoblinXNA.Device.Capture;
-using GoblinXNA.Device.Vision;
-using GoblinXNA.Device.Vision.Marker;
-using GoblinXNA.Device.Util;
-using GoblinXNA.Helpers;
-using GoblinXNA.UI;
-using GoblinXNA.UI.UI2D;
-
-using Tutorial16___Multiple_Viewport;
-using Curveball;
-using GoblinXNA.Physics.Matali;
 
 namespace Tutorial16___Multiple_Viewport___PhoneLib
 {
@@ -93,7 +90,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
 
         Texture2D videoTexture;
 
-        float markerSize = 32.4f;
+        public const float MarkerSize = 80.0f;
 
         // Curveball: The state of the game.
         enum GameState
@@ -161,6 +158,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             // Create a 'LevelInfo' instance describing the level settings.
             LevelInfo info = new LevelInfo(Role.Server);
             info.Team1PlayerTypes.Add(PlayerAgentType.Ai);
+            info.Team2PlayerTypes.Add(PlayerAgentType.Wall);
             info.Team2PlayerTypes.Add(PlayerAgentType.Main);
 
             // Create a level with the settings, and start it.
@@ -303,7 +301,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
         {
             vrCameraRepNode = new GeometryNode("VR Camera")
             {
-                Model = new Pyramid(markerSize * 4 / 3, markerSize, markerSize),
+                Model = new Pyramid(MarkerSize * 4 / 3, MarkerSize, MarkerSize),
                 Material =
                 {
                     Diffuse = Color.Orange.ToVector4(),
@@ -347,7 +345,7 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             else
             {
                 // Update non-physics logic.
-                _level.Update();
+                _level.Update(elapsedTime, isActive);
 
                 // If a winner is born...
                 if (_level.GetResult() != Level.LevelResult.Na)
@@ -458,14 +456,6 @@ namespace Tutorial16___Multiple_Viewport___PhoneLib
             get
             {
                 return overlayRoot;
-            }
-        }
-
-        public float MarkerSize
-        {
-            get
-            {
-                return markerSize;
             }
         }
     }

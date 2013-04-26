@@ -53,7 +53,7 @@ namespace Tutorial16___Multiple_Viewport___Phone
     {
         ContentManager contentManager;
         GameTimer timer;
-
+        string label = "";
         Tutorial16_Phone tutorial16;
 
         // For rendering the XAML onto a texture
@@ -98,9 +98,9 @@ namespace Tutorial16___Multiple_Viewport___Phone
         {
             // Set the sharing mode of the graphics device to turn on XNA rendering
             SharedGraphicsDeviceManager.Current.GraphicsDevice.SetSharingMode(true);
-
+            label = NavigationContext.QueryString["Username"].ToString();
             tutorial16.Initialize(SharedGraphicsDeviceManager.Current, contentManager, viewfinderBrush);
-
+            //tutorial16.label = label;
             // Start the timer
             timer.Start();
 

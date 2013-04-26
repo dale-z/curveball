@@ -29,6 +29,6 @@ namespace Curveball
             set;
         }
 
-        private Level _level;
+        protected Level _level;
     }
 }

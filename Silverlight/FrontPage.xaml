@@ -13,7 +13,7 @@
     SupportedOrientations="Landscape" Orientation="Landscape"
     mc:Ignorable="d">
 	<StackPanel HorizontalAlignment="Left" Height="480" VerticalAlignment="Top" Width="800">
-		<Rectangle Height="100">
+		<Rectangle Height="49">
 			<Rectangle.Fill>
 				<VideoBrush/>
 			</Rectangle.Fill>
@@ -23,15 +23,8 @@
 				<Run FontSize="79.25" Text="Curveball 2.0"/>
 			</Paragraph>
 		</RichTextBox>
+		<TextBox Height="72" x:Name="userBox" TextWrapping="Wrap" Text="Username:" Margin="268,0,270,0" InputScope="LogOnName" TextAlignment="Center" TextChanged="TextBox_TextChanged" Tap="TextBox_Tap" KeyUp="userBox_KeyUp"/>
 		<StackPanel Height="195" Orientation="Horizontal">
-			<Button Content="Single Player" Width="266">
-				<i:Interaction.Triggers>
-					<i:EventTrigger EventName="Click">
-						<ec:NavigateToPageAction TargetPage="/GamePage.xaml"/>
-					</i:EventTrigger>
-				</i:Interaction.Triggers>
-			</Button>
-			<Button Content="Multi Player" Width="265"/>
 			<Button Content="Settings" Width="266">
 				<i:Interaction.Triggers>
 					<i:EventTrigger EventName="Click">
@@ -39,7 +32,10 @@
 					</i:EventTrigger>
 				</i:Interaction.Triggers>
 			</Button>
+			<Button Content="Start" Width="265" Click="Button_Click"/>
+            <Button Content="Help" Width="266"/>
 		</StackPanel>
+		<TextBlock x:Name="ErrorBox" TextWrapping="Wrap" Foreground="Red" TextAlignment="Center"/>
 	</StackPanel>
 
     <!--LayoutRoot is the root grid where all page content is placed-->

@@ -21,18 +21,27 @@
             <!--Pivot item one-->
             <controls:PivotItem Header="Mode">
                 <StackPanel HorizontalAlignment="Left" Height="319" VerticalAlignment="Top" Width="704">
-                	<RadioButton Content="Player vs Wall" GroupName="gameMode" IsChecked="True"/>
-                	<RadioButton Content="Player vs CPU" GroupName="gameMode" IsChecked="False"/>
-                	<RadioButton Content="Player 1 vs Player 2" GroupName="gameMode" IsChecked="False"/>
-                	<RadioButton Content="Team 1 vs Team 2" GroupName="gameMode" IsChecked="False"/>
+                    <RadioButton x:Name="Player_vs_CPU" Content="Player vs CPU" GroupName="gameMode" IsChecked="False" Checked="Player_vs_CPU_Checked"/>
+                    <RadioButton Content="Player vs Wall" GroupName="gameMode" IsChecked="True" Checked="RadioButton_Checked"/>
+                    <RadioButton Content="Player 1 vs Player 2" GroupName="gameMode" IsChecked="False" Checked="RadioButton_Checked_1"/>
+                    <RadioButton Content="Team 1 vs Team 2" GroupName="gameMode" IsChecked="False" Checked="RadioButton_Checked_2"/>
                 </StackPanel>
             </controls:PivotItem>
 
             <!--Pivot item two-->
             <controls:PivotItem Header="Options">
-                <Grid/>
+                <StackPanel HorizontalAlignment="Left" Height="319" VerticalAlignment="Top" Width="776">
+                    <StackPanel Height="82" Orientation="Horizontal">
+                        <TextBlock TextWrapping="Wrap" Text="Powerups" Width="121" VerticalAlignment="Center"/>
+                        <CheckBox Content="" IsChecked="True"/>
+                    </StackPanel>
+                    <StackPanel Height="60" Orientation="Horizontal">
+                        <TextBlock TextWrapping="Wrap" Text="Difficulty (Easy -&gt; Hard)"/>
+                        <Slider Maximum="3" Width="563" VerticalAlignment="Center" Height="100"/>
+                    </StackPanel>
+                </StackPanel>
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>
-    
+
 </phone:PhoneApplicationPage>
